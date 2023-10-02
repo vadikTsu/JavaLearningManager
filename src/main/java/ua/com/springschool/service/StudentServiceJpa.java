@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.com.springschool.entity.Course;
 import ua.com.springschool.entity.Student;
+import ua.com.springschool.mapper.CourseMapper;
 import ua.com.springschool.mapper.StudentMapper;
 import ua.com.springschool.model.StudentDTO;
 import ua.com.springschool.repository.CourseRepository;
@@ -22,12 +23,16 @@ public class StudentServiceJpa implements StudentService{
     private final StudentRepository studentRepository;
     private final CourseRepository courseRepository;
     private final StudentMapper studentMapper;
+    private final CourseMapper courseMapper;
 
     @Autowired
-    public StudentServiceJpa(StudentRepository studentRepository, CourseRepository courseRepository, StudentMapper studentMapper) {
+    public StudentServiceJpa(StudentRepository studentRepository,
+                             CourseRepository courseRepository,
+                             StudentMapper studentMapper, CourseMapper courseMapper) {
         this.studentRepository = studentRepository;
         this.courseRepository = courseRepository;
         this.studentMapper = studentMapper;
+        this.courseMapper = courseMapper;
     }
 
     @Override
@@ -49,7 +54,8 @@ public class StudentServiceJpa implements StudentService{
 
     @Override
     public StudentDTO saveNewStudent(StudentDTO studentDTO) {
-        return studentMapper.studentToStudentDto(studentRepository.save(studentMapper.studentDtoToStudent(studentDTO)));
+        return studentMapper.studentToStudentDto(studentRepository.
+                save(studentMapper.studentDtoToStudent(studentDTO)));
     }
 
     @Transactional
@@ -79,6 +85,17 @@ public class StudentServiceJpa implements StudentService{
         } else {
             return false;
         }
+    }
+
+    @Override
+    public Optional<Iterable<Course>> getCoursesByStudentsId(UUID studentId) {
+        if(studentRepository.existsById(studentId)){
+            Optional<Student> student = studentRepository.findById(studentId);
+            if(student.isPresent()){
+                return Optional.of(student.get().getCourses().stream().peek(courseMapper::courseToCourseDto).collect(Collectors.toList()));
+            }
+        }
+        return Optional.empty();
     }
 
 }

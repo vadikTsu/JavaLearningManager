@@ -1,5 +1,6 @@
 package ua.com.springschool.service;
 
+import ua.com.springschool.entity.Course;
 import ua.com.springschool.model.StudentDTO;
 
 import java.util.List;
@@ -15,4 +16,6 @@ public interface StudentService {
     StudentDTO saveNewStudent(StudentDTO studentDTO);
 
     Boolean deleteById(UUID beerId);
+
+    Optional<Iterable<Course>> getCoursesByStudentsId(UUID id);
 }

@@ -10,6 +10,7 @@ import ua.com.springschool.repository.StudentRepository;
 @Component
 @RequiredArgsConstructor
 public class BootstrapData implements CommandLineRunner {
+
     private final StudentRepository studentRepository;
     private final GroupRepository groupRepository;
     private final CourseRepository courseRepository;
