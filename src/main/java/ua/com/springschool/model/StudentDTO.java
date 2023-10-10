@@ -2,6 +2,7 @@ package ua.com.springschool.model;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 import java.util.Set;
@@ -11,8 +12,8 @@ import java.util.UUID;
 @Builder
 public class StudentDTO {
 
-    private UUID id;
+    private Long id;
     private String name;
-    private UUID groupId;
-    private Set<UUID> courseIds;
+    private Long groupId;
+    private Set<Long> courseIds;
 }

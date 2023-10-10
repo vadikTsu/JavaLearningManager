@@ -10,7 +10,7 @@ import java.util.UUID;
 @Builder
 public class CourseDTO {
 
-    private UUID id;
+    private Long id;
     private String name;
-    private Set<UUID> students;
+    private Set<Long> studentIds;
 }
