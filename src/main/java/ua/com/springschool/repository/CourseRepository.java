@@ -5,5 +5,5 @@ import ua.com.springschool.entity.Course;
 
 import java.util.UUID;
 
-public interface CourseRepository extends JpaRepository<Course, UUID> {
+public interface CourseRepository extends JpaRepository<Course, Long> {
 }

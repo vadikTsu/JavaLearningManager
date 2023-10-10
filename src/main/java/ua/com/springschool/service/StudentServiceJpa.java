@@ -5,16 +5,19 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.com.springschool.entity.Course;
+import ua.com.springschool.entity.Group;
 import ua.com.springschool.entity.Student;
 import ua.com.springschool.mapper.CourseMapper;
 import ua.com.springschool.mapper.StudentMapper;
+import ua.com.springschool.model.CourseDTO;
 import ua.com.springschool.model.StudentDTO;
 import ua.com.springschool.repository.CourseRepository;
+import ua.com.springschool.repository.GroupRepository;
 import ua.com.springschool.repository.StudentRepository;
 
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
-import java.util.UUID;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,63 +25,66 @@ public class StudentServiceJpa implements StudentService{
 
     private final StudentRepository studentRepository;
     private final CourseRepository courseRepository;
+    private final GroupRepository groupRepository;
     private final StudentMapper studentMapper;
     private final CourseMapper courseMapper;
 
     @Autowired
     public StudentServiceJpa(StudentRepository studentRepository,
                              CourseRepository courseRepository,
-                             StudentMapper studentMapper, CourseMapper courseMapper) {
+                             GroupRepository groupRepository,
+                             StudentMapper studentMapper,
+                             CourseMapper courseMapper) {
         this.studentRepository = studentRepository;
         this.courseRepository = courseRepository;
+        this.groupRepository = groupRepository;
         this.studentMapper = studentMapper;
         this.courseMapper = courseMapper;
     }
 
     @Override
-    public List<StudentDTO> listStudents() {
-        return studentRepository.findAll()
+    public Optional<Iterable<StudentDTO>> listStudents() {
+        return Optional.of(studentRepository.findAll()
                 .stream()
                 .map(studentMapper::studentToStudentDto)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 
     @Override
-    public Optional<StudentDTO> getStudentById(UUID id) {
-        return Optional.ofNullable(
-                studentMapper.studentToStudentDto(
-                        studentRepository
-                                .findById(id)
-                                .orElse(null)));
+    public Optional<StudentDTO> getStudentById(Long id) {
+        return studentRepository.findById(id)
+                .map(studentMapper::studentToStudentDto)
+                .map(Optional::of)
+                .orElse(Optional.empty());
     }
 
+    //todo refactor
     @Override
     public StudentDTO saveNewStudent(StudentDTO studentDTO) {
-        return studentMapper.studentToStudentDto(studentRepository.
-                save(studentMapper.studentDtoToStudent(studentDTO)));
+        Student student = studentMapper.studentDtoToStudent(studentDTO);
+        Set<Course> courses = new HashSet<>(courseRepository.findAllById(studentDTO.getCourseIds()));
+        Group group  = groupRepository.findById(studentDTO.getGroupId())
+                .orElseThrow(()-> new RuntimeException("Not existing group with ID: " + studentDTO.getGroupId()));
+        student.setGroup(group);
+        student.setCourses(courses);
+        return studentMapper.studentToStudentDto(studentRepository.save(student));
     }
 
     @Transactional
-    public void addStudentToCourse(UUID studentId, UUID courseId) {
-        Optional<Student> studentOptional = studentRepository.findById(studentId);
-        Optional<Course> courseOptional = courseRepository.findById(courseId);
+    @Override
+    public void assignStudentToCourse(Long studentId, Long courseId) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new EntityNotFoundException("Student not found with ID: " + studentId));
 
-        if (studentOptional.isPresent() && courseOptional.isPresent()) {
-            Course course = courseOptional.get();
-            Student student = studentOptional.get();
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new EntityNotFoundException("Course not found with ID: " + courseId));
 
-            course.getStudents().add(student);
-            student.getCourses().add(course);
-
-            courseRepository.save(course);
-            studentRepository.save(student);
-        } else {
-            throw new EntityNotFoundException("Invalid Id given!");
-        }
+        course.getStudents().add(student);
+        student.getCourses().add(course);
     }
 
     @Override
-    public Boolean deleteById(UUID studentId) {
+    public Boolean deleteById(Long studentId) {
         if (studentRepository.existsById(studentId)) {
             studentRepository.deleteById(studentId);
             return true;
@@ -88,14 +94,46 @@ public class StudentServiceJpa implements StudentService{
     }
 
     @Override
-    public Optional<Iterable<Course>> getCoursesByStudentsId(UUID studentId) {
-        if(studentRepository.existsById(studentId)){
-            Optional<Student> student = studentRepository.findById(studentId);
-            if(student.isPresent()){
-                return Optional.of(student.get().getCourses().stream().peek(courseMapper::courseToCourseDto).collect(Collectors.toList()));
-            }
-        }
-        return Optional.empty();
+    public Optional<Iterable<CourseDTO>> getCoursesByStudentsId(Long studentId) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new EntityNotFoundException("Student not found with ID: " + studentId));
+        return Optional.of(student
+                .getCourses()
+                .stream()
+                .map(courseMapper::courseToCourseDto)
+                .collect(Collectors.toList()));
     }
 
+    @Transactional
+    @Override
+    public void moveStuentToGroup(Long studentId, Long newGroupId) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new EntityNotFoundException("Student not found with ID: " + studentId));
+
+        Group newGroup = groupRepository.findById(newGroupId)
+                .orElseThrow(() -> new EntityNotFoundException("Group not found with ID: " + newGroupId));
+
+        Group oldGroup = student.getGroup();
+        if (oldGroup != null && !oldGroup.getId().equals(newGroup.getId())) {
+            oldGroup.getStudents().remove(student);
+        }
+        student.setGroup(newGroup);
+    }
+
+    @Transactional
+    @Override
+    public void removeStudentFromCourse(Long studentId, Long courseId) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new EntityNotFoundException("Student not found with ID: " + studentId));
+
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new EntityNotFoundException("Course not found with ID: " + courseId));
+
+        if (course.getStudents().contains(student) && student.getCourses().contains(course)) {
+            course.getStudents().remove(student);
+            student.getCourses().remove(course);
+        } else {
+            throw new RuntimeException("Student is not enrolled to course with ID: " + courseId);
+        }
+    }
 }

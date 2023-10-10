@@ -9,6 +9,6 @@ import ua.com.springschool.model.GroupDTO;
 @Mapper
 public interface CourseMapper {
 
-    Course courseDtoToCourse(CourseDTO courseDTODTO);
+    Course courseDtoToCourse(CourseDTO courseDTO);
     CourseDTO courseToCourseDto(Course course);
 }

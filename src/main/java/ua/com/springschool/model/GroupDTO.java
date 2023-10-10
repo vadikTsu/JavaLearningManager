@@ -12,7 +12,7 @@ import java.util.UUID;
 @Builder
 public class GroupDTO {
 
-    private UUID id;
+    private Long id;
     private String name;
-    private Set<UUID> studentIds;
+    private Set<Long> studentIds;
 }

@@ -1,21 +1,31 @@
 package ua.com.springschool.service;
 
-import ua.com.springschool.entity.Course;
+import jakarta.transaction.Transactional;
+import ua.com.springschool.model.CourseDTO;
 import ua.com.springschool.model.StudentDTO;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface StudentService {
 
-    List<StudentDTO> listStudents();
+    Optional<Iterable<StudentDTO>> listStudents();
 
-    Optional<StudentDTO> getStudentById(UUID id);
+    Optional<StudentDTO> getStudentById(Long id);
 
     StudentDTO saveNewStudent(StudentDTO studentDTO);
 
-    Boolean deleteById(UUID beerId);
+    @Transactional
+    void assignStudentToCourse(Long studentId, Long courseId);
 
-    Optional<Iterable<Course>> getCoursesByStudentsId(UUID id);
+    Boolean deleteById(Long studentId);
+
+    Optional<Iterable<CourseDTO>> getCoursesByStudentsId(Long id);
+
+
+    @Transactional
+    void moveStuentToGroup(Long studentId, Long groupId);
+
+    @Transactional
+    void removeStudentFromCourse(Long studentId, Long courseId);
 }
