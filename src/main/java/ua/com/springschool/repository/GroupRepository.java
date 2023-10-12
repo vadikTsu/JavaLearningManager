@@ -10,9 +10,9 @@ import java.util.UUID;
 public interface GroupRepository extends JpaRepository<Group, Long> {
 
     @Query("SELECT g FROM Group g " +
-            "LEFT JOIN g.students s " +
-            "GROUP BY g.id, g.name " +
-            "HAVING COUNT(s.id) <= :lessThanStudents")
+        "LEFT JOIN g.students s " +
+        "GROUP BY g.id, g.name " +
+        "HAVING COUNT(s.id) <= :lessThanStudents")
     Collection<Group> findAllGroupsWithLessStudents(int lessThanStudents);
 }
 

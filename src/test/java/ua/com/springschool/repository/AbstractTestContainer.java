@@ -11,8 +11,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import ua.com.springschool.SpringSchoolApplication;
 
 @SpringBootTest(
-        classes = SpringSchoolApplication.class,
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
+    classes = SpringSchoolApplication.class,
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @Testcontainers
 abstract class AbstractTestContainer {

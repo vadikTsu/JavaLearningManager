@@ -8,5 +8,6 @@ import ua.com.springschool.model.GroupDTO;
 public interface GroupMapper {
 
     Group groupDtoToGroup(GroupDTO groupDTO);
+
     GroupDTO groupToGroupDto(Group group);
 }

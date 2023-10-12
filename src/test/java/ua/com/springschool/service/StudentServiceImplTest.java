@@ -3,11 +3,6 @@ package ua.com.springschool.service;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.when;
-
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -22,7 +17,13 @@ import ua.com.springschool.repository.CourseRepository;
 import ua.com.springschool.repository.GroupRepository;
 import ua.com.springschool.repository.StudentRepository;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -82,7 +83,7 @@ class StudentServiceImplTest {
 
     @Test
     void saveNewStudent_shouldReturnSavedStudentDTO_whenValidStudentDTO() {
-        var studentDTO =  StudentDTO.builder().groupId(1L).build();
+        var studentDTO = StudentDTO.builder().groupId(1L).build();
         studentDTO.setCourseIds(Set.of(1L, 2L));
         studentDTO.setGroupId(1L);
 
@@ -111,7 +112,7 @@ class StudentServiceImplTest {
 
         studentServiceImpl.assignStudentToCourse(1L, 2L);
 
-        verify(course,times(1)).getStudents();
+        verify(course, times(1)).getStudents();
         verify(student, times(1)).getCourses();
     }
 
@@ -172,6 +173,7 @@ class StudentServiceImplTest {
 
         assertThrows(EntityNotFoundException.class, () -> studentServiceImpl.getCoursesByStudentsId(1L));
     }
+
     @Test
     void moveStudentToGroup_shouldMoveStudentToNewGroup() {
         Long studentId = 1L;

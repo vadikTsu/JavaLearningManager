@@ -8,6 +8,7 @@ import ua.com.springschool.model.StudentDTO;
 public interface StudentMapper {
 
     Student studentDtoToStudent(StudentDTO studentDTO);
+
     StudentDTO studentToStudentDto(Student student);
 
 }

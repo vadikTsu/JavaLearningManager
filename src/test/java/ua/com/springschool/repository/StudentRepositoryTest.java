@@ -26,13 +26,13 @@ class StudentRepositoryTest extends AbstractTestContainer {
     @Test
     public void studentRepository_saveStudent_ReturnSavedPokemon() {
         StudentDTO studentDTO = StudentDTO.builder().id(7L)
-                .name("pikachu")
-                .groupId(1L)
-                .build();
+            .name("pikachu")
+            .groupId(1L)
+            .build();
 
         Student student = studentMapper.studentDtoToStudent(studentDTO);
 
-        student.setGroup(groupRepository.findById(studentDTO.getGroupId()).orElseThrow(() -> new  RuntimeException()));
+        student.setGroup(groupRepository.findById(studentDTO.getGroupId()).orElseThrow(() -> new RuntimeException()));
         Student savedStudent = studentRepository.save(student);
 
         assertThat(savedStudent).isNotNull();
@@ -52,7 +52,7 @@ class StudentRepositoryTest extends AbstractTestContainer {
 
     @Test
     public void studentRepository_FindById_ReturnPokemon() {
-        Student student = studentRepository.findById(1L).orElseThrow(()-> new RuntimeException());
+        Student student = studentRepository.findById(1L).orElseThrow(() -> new RuntimeException());
 
         Assertions.assertEquals("Student 1", student.getName());
 
@@ -69,7 +69,7 @@ class StudentRepositoryTest extends AbstractTestContainer {
     }
 
     @Test
-    public void studentRepository_shouldFindAllStudentsAssignedToCourse_whenValidName(){
+    public void studentRepository_shouldFindAllStudentsAssignedToCourse_whenValidName() {
 
         List<Student> students = (List<Student>) studentRepository.findAllStudentsAssignedToCourse("Mathematics");
         assertThat(students.size()).isGreaterThan(0);
