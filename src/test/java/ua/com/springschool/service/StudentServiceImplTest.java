@@ -149,10 +149,6 @@ class StudentServiceImplTest {
 
         CourseDTO courseDto1 = CourseDTO.builder().build();
         CourseDTO courseDto2 = CourseDTO.builder().build();
-        HashSet<CourseDTO> courseDtos = new HashSet<>();
-        courseDtos.add(courseDto1);
-        courseDtos.add(courseDto2);
-
         Student student = new Student();
         student.setCourses(courses);
 
