@@ -21,7 +21,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class StudentServiceJpa implements StudentService{
+public class StudentServiceImpl implements StudentService{
 
     private final StudentRepository studentRepository;
     private final CourseRepository courseRepository;
@@ -30,11 +30,11 @@ public class StudentServiceJpa implements StudentService{
     private final CourseMapper courseMapper;
 
     @Autowired
-    public StudentServiceJpa(StudentRepository studentRepository,
-                             CourseRepository courseRepository,
-                             GroupRepository groupRepository,
-                             StudentMapper studentMapper,
-                             CourseMapper courseMapper) {
+    public StudentServiceImpl(StudentRepository studentRepository,
+                              CourseRepository courseRepository,
+                              GroupRepository groupRepository,
+                              StudentMapper studentMapper,
+                              CourseMapper courseMapper) {
         this.studentRepository = studentRepository;
         this.courseRepository = courseRepository;
         this.groupRepository = groupRepository;
@@ -58,7 +58,6 @@ public class StudentServiceJpa implements StudentService{
                 .orElse(Optional.empty());
     }
 
-    //todo refactor
     @Override
     public StudentDTO saveNewStudent(StudentDTO studentDTO) {
         Student student = studentMapper.studentDtoToStudent(studentDTO);

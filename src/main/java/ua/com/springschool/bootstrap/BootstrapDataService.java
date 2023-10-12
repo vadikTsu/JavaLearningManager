@@ -19,7 +19,7 @@ import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
-public class BootstrapData implements ApplicationRunner {
+public class BootstrapDataService implements ApplicationRunner {
 
     private final StudentRepository studentRepository;
     private final GroupRepository groupRepository;
