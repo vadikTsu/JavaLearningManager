@@ -3,7 +3,6 @@ package ua.com.springschool.bootstrap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import ua.com.springschool.entity.Course;
 import ua.com.springschool.entity.Group;
@@ -12,9 +11,6 @@ import ua.com.springschool.repository.CourseRepository;
 import ua.com.springschool.repository.GroupRepository;
 import ua.com.springschool.repository.StudentRepository;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Component
