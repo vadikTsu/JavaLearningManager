@@ -1,20 +1,16 @@
 package ua.com.springschool.repository;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import ua.com.springschool.entity.Group;
 
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-
-@SpringBootTest
-@Testcontainers
-class GroupRepositoryTest extends AbstractTestContainer {
+class GroupRepositoryTest extends AbstractTestContainer{
 
     @Autowired
     GroupRepository groupRepository;

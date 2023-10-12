@@ -19,10 +19,6 @@ import ua.com.springschool.model.StudentDTO;
 import java.util.List;
 import java.util.Optional;
 
-
-
-@SpringBootTest
-@Testcontainers
 class StudentRepositoryTest extends AbstractTestContainer {
 
     @Autowired

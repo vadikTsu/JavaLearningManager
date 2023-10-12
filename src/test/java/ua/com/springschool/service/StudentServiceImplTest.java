@@ -1,7 +1,6 @@
 package ua.com.springschool.service;
 
 import jakarta.persistence.EntityNotFoundException;
-import net.bytebuddy.dynamic.DynamicType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -27,10 +26,10 @@ import java.util.*;
 
 
 @ExtendWith(MockitoExtension.class)
-class StudentServiceJpaTest {
+class StudentServiceImplTest {
 
     @InjectMocks
-    private StudentServiceJpa studentServiceJpa;
+    private StudentServiceImpl studentServiceImpl;
 
     @Mock
     private StudentRepository studentRepository;
@@ -56,8 +55,8 @@ class StudentServiceJpaTest {
         when(studentRepository.findAll()).thenReturn(List.of(s));
         when(studentMapper.studentToStudentDto(s)).thenReturn(dto1);
 
-        assertTrue(studentServiceJpa.listStudents() instanceof Optional<Iterable<StudentDTO>>);
-        assertEquals(studentServiceJpa.listStudents().get(), List.of(dto1));
+        assertTrue(studentServiceImpl.listStudents() instanceof Optional<Iterable<StudentDTO>>);
+        assertEquals(studentServiceImpl.listStudents().get(), List.of(dto1));
     }
 
     @Test
@@ -68,31 +67,40 @@ class StudentServiceJpaTest {
         when(studentRepository.findById(1L)).thenReturn(Optional.ofNullable(s));
         when(studentMapper.studentToStudentDto(s)).thenReturn(dto);
 
-        assertTrue(studentServiceJpa.getStudentById(1L) instanceof Optional<StudentDTO>);
-        assertEquals(studentServiceJpa.getStudentById(1L).get(), dto);
+        assertTrue(studentServiceImpl.getStudentById(1L) instanceof Optional<StudentDTO>);
+        assertEquals(studentServiceImpl.getStudentById(1L).get(), dto);
     }
 
     @Test
     void getStudentById_shouldReturnEmptyOptioanl_whenNonExistingStudentId() {
         when(studentRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        Optional<StudentDTO> result = studentServiceJpa.getStudentById(2L);
+        Optional<StudentDTO> result = studentServiceImpl.getStudentById(2L);
 
         assertEquals(Optional.empty(), result);
     }
 
-//    @Test
-//    void saveNewStudent_shouldReturnSavedStudentDTO_whenValidStudentDTO() {
-//        var studentDTO =  StudentDTO.builder().build();
-//        var student = Student.builder().build();
-//        when(studentMapper.studentDtoToStudent(studentDTO)).thenReturn(student);
-//        when(studentRepository.save(student)).thenReturn(student);
-//        when(studentMapper.studentToStudentDto(student)).thenReturn(studentDTO);
-//
-//        StudentDTO studentSaved = studentServiceJpa.saveNewStudent(studentDTO);
-//
-//        assertEquals(studentSaved, studentDTO);
-//    }
+    @Test
+    void saveNewStudent_shouldReturnSavedStudentDTO_whenValidStudentDTO() {
+        var studentDTO =  StudentDTO.builder().groupId(1L).build();
+        studentDTO.setCourseIds(Set.of(1L, 2L));
+        studentDTO.setGroupId(1L);
+
+        var student = spy(Student.builder().build());
+        var course1 = Course.builder().build();
+        var course2 = Course.builder().build();
+        var group = Group.builder().build();
+
+        when(studentMapper.studentDtoToStudent(studentDTO)).thenReturn(student);
+        when(courseRepository.findAllById(studentDTO.getCourseIds())).thenReturn(List.of(course1, course2));
+        when(groupRepository.findById(studentDTO.getGroupId())).thenReturn(Optional.of(group));
+        when(studentMapper.studentToStudentDto(student)).thenReturn(StudentDTO.builder().build());
+        when(studentRepository.save(student)).thenReturn(student);
+        var savedStudentDto = studentServiceImpl.saveNewStudent(studentDTO);
+        verify(student, times(1)).setCourses(any());
+        verify(student, times(1)).setGroup(any());
+        assertTrue(savedStudentDto instanceof StudentDTO);
+    }
 
     @Test
     void assignStudentToCourse_shouldAssignStuedntToCourse_whenStudentAndCourseExists() {
@@ -101,7 +109,7 @@ class StudentServiceJpaTest {
         var course = spy(Course.builder().students(new HashSet<>()).build());
         when(courseRepository.findById(anyLong())).thenReturn(Optional.of(course));
 
-        studentServiceJpa.assignStudentToCourse(1L, 2L);
+        studentServiceImpl.assignStudentToCourse(1L, 2L);
 
         verify(course,times(1)).getStudents();
         verify(student, times(1)).getCourses();
@@ -113,7 +121,7 @@ class StudentServiceJpaTest {
 
         when(studentRepository.existsById(studentId)).thenReturn(true);
 
-        boolean result = studentServiceJpa.deleteById(studentId);
+        boolean result = studentServiceImpl.deleteById(studentId);
 
         assertTrue(result);
         verify(studentRepository, times(1)).deleteById(studentId);
@@ -125,7 +133,7 @@ class StudentServiceJpaTest {
 
         when(studentRepository.existsById(1L)).thenReturn(false);
 
-        boolean result = studentServiceJpa.deleteById(studentId);
+        boolean result = studentServiceImpl.deleteById(studentId);
 
         assertFalse(result);
         verify(studentRepository, never()).deleteById(studentId);
@@ -152,7 +160,7 @@ class StudentServiceJpaTest {
         when(courseMapper.courseToCourseDto(course1)).thenReturn(courseDto1);
         when(courseMapper.courseToCourseDto(course2)).thenReturn(courseDto2);
 
-        Optional<Iterable<CourseDTO>> result = studentServiceJpa.getCoursesByStudentsId(1L);
+        Optional<Iterable<CourseDTO>> result = studentServiceImpl.getCoursesByStudentsId(1L);
 
         assertTrue(result.isPresent());
         Iterable<CourseDTO> resultCourses = result.get();
@@ -166,7 +174,7 @@ class StudentServiceJpaTest {
     void getCoursesByStudentsId_shouldThrowEntityNotFoundException_whenStudentDoesNotExist() {
         when(studentRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> studentServiceJpa.getCoursesByStudentsId(1L));
+        assertThrows(EntityNotFoundException.class, () -> studentServiceImpl.getCoursesByStudentsId(1L));
     }
     @Test
     void moveStudentToGroup_shouldMoveStudentToNewGroup() {
@@ -182,7 +190,7 @@ class StudentServiceJpaTest {
         when(studentRepository.findById(studentId)).thenReturn(Optional.of(student));
         when(groupRepository.findById(newGroupId)).thenReturn(Optional.of(newGroup));
 
-        studentServiceJpa.moveStuentToGroup(studentId, newGroupId);
+        studentServiceImpl.moveStuentToGroup(studentId, newGroupId);
 
         assertEquals(newGroup, student.getGroup());
 
@@ -197,7 +205,7 @@ class StudentServiceJpaTest {
 
         when(studentRepository.findById(studentId)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> studentServiceJpa.moveStuentToGroup(studentId, newGroupId));
+        assertThrows(EntityNotFoundException.class, () -> studentServiceImpl.moveStuentToGroup(studentId, newGroupId));
     }
 
     @Test
@@ -211,7 +219,7 @@ class StudentServiceJpaTest {
         when(studentRepository.findById(studentId)).thenReturn(Optional.of(student));
         when(groupRepository.findById(newGroupId)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> studentServiceJpa.moveStuentToGroup(studentId, newGroupId));
+        assertThrows(EntityNotFoundException.class, () -> studentServiceImpl.moveStuentToGroup(studentId, newGroupId));
     }
 
     @Test
@@ -221,7 +229,7 @@ class StudentServiceJpaTest {
 
         when(studentRepository.findById(studentId)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> studentServiceJpa.removeStudentFromCourse(studentId, courseId));
+        assertThrows(EntityNotFoundException.class, () -> studentServiceImpl.removeStudentFromCourse(studentId, courseId));
     }
 
     @Test
@@ -235,7 +243,7 @@ class StudentServiceJpaTest {
         when(studentRepository.findById(studentId)).thenReturn(Optional.of(student));
         when(courseRepository.findById(courseId)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> studentServiceJpa.removeStudentFromCourse(studentId, courseId));
+        assertThrows(EntityNotFoundException.class, () -> studentServiceImpl.removeStudentFromCourse(studentId, courseId));
     }
 
     @Test
@@ -253,6 +261,6 @@ class StudentServiceJpaTest {
         when(studentRepository.findById(studentId)).thenReturn(Optional.of(student));
         when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
 
-        assertThrows(RuntimeException.class, () -> studentServiceJpa.removeStudentFromCourse(studentId, courseId));
+        assertThrows(RuntimeException.class, () -> studentServiceImpl.removeStudentFromCourse(studentId, courseId));
     }
 }
