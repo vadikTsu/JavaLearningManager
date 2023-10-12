@@ -47,7 +47,6 @@ class StudentServiceImplTest {
     @Mock
     private StudentMapper studentMapper;
 
-
     @Test
     void listStudents_shouldReturnOptionalIterableOfStudentsDto_whenNotEmpltyRepository() {
         Student s = Student.builder().group(null).id(1L).name("alex").build();

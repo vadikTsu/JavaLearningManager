@@ -2,7 +2,9 @@ package ua.com.springschool.repository;
 
 import static org.assertj.core.api.Assertions.*;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import ua.com.springschool.entity.Student;
@@ -14,14 +16,18 @@ import java.util.Optional;
 
 class StudentRepositoryTest extends AbstractTestContainer {
 
-    @Autowired
     StudentRepository studentRepository;
 
-    @Autowired
     GroupRepository groupRepository;
 
-    @Autowired
     StudentMapper studentMapper;
+
+    @Autowired
+    public StudentRepositoryTest(StudentRepository studentRepository, GroupRepository groupRepository, StudentMapper studentMapper) {
+        this.studentRepository = studentRepository;
+        this.groupRepository = groupRepository;
+        this.studentMapper = studentMapper;
+    }
 
     @Test
     public void studentRepository_saveStudent_ReturnSavedPokemon() {
