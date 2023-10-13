@@ -65,9 +65,9 @@ class StudentRepositoryTest extends AbstractTestContainer {
 
     @Test
     public void PokemonRepository_PokemonDelete_ReturnPokemonIsEmpty() {
-        studentRepository.deleteById(1L);
+        studentRepository.deleteById(7L);
 
-        Optional<Student> student = studentRepository.findById(1L);
+        Optional<Student> student = studentRepository.findById(7L);
 
         assertThat(student).isEmpty();
     }

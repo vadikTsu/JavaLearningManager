@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 import ua.com.springschool.entity.Student;
 
 import java.util.Collection;
-import java.util.UUID;
 
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Long> {

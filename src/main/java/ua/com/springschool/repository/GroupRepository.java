@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.Query;
 import ua.com.springschool.entity.Group;
 
 import java.util.Collection;
-import java.util.UUID;
 
 public interface GroupRepository extends JpaRepository<Group, Long> {
 

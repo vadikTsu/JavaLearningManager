@@ -16,6 +16,7 @@ import ua.com.springschool.model.StudentDTO;
 import ua.com.springschool.repository.CourseRepository;
 import ua.com.springschool.repository.GroupRepository;
 import ua.com.springschool.repository.StudentRepository;
+import ua.com.springschool.service.impl.StudentServiceImpl;
 
 import java.util.HashSet;
 import java.util.List;

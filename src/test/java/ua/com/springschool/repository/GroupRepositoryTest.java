@@ -32,7 +32,7 @@ class GroupRepositoryTest extends AbstractTestContainer {
 
     @Test
     void findAllGroupsWithLessStudents_shouldFetchEmptyCollection_whenMinimumInput() {
-        Collection<Group> groupsWithLessThanStudents = groupRepository.findAllGroupsWithLessStudents(1);
+        Collection<Group> groupsWithLessThanStudents = groupRepository.findAllGroupsWithLessStudents(0);
 
         Assertions.assertTrue(groupsWithLessThanStudents.isEmpty());
     }

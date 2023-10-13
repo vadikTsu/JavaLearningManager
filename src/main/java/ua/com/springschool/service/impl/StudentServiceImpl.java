@@ -1,4 +1,4 @@
-package ua.com.springschool.service;
+package ua.com.springschool.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -14,6 +14,7 @@ import ua.com.springschool.model.StudentDTO;
 import ua.com.springschool.repository.CourseRepository;
 import ua.com.springschool.repository.GroupRepository;
 import ua.com.springschool.repository.StudentRepository;
+import ua.com.springschool.service.StudentService;
 
 import java.util.HashSet;
 import java.util.Optional;
