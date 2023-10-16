@@ -42,6 +42,7 @@ public class StudentController {
             return "student-not-found";
         }
     }
+
     @GetMapping("/form")
     public String saveStudentForm(Model model) {
         model.addAttribute("student", StudentDTO.builder().build());
