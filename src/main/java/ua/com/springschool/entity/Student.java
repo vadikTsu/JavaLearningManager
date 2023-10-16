@@ -11,6 +11,7 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "students")
 public class Student {
 
     @Id
@@ -18,7 +19,7 @@ public class Student {
     private Long id;
     private String name;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "group_id")
     private Group group;
 

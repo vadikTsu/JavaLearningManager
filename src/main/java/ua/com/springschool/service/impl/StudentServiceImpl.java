@@ -8,8 +8,10 @@ import ua.com.springschool.entity.Course;
 import ua.com.springschool.entity.Group;
 import ua.com.springschool.entity.Student;
 import ua.com.springschool.mapper.CourseMapper;
+import ua.com.springschool.mapper.GroupMapper;
 import ua.com.springschool.mapper.StudentMapper;
 import ua.com.springschool.model.CourseDTO;
+import ua.com.springschool.model.GroupDTO;
 import ua.com.springschool.model.StudentDTO;
 import ua.com.springschool.repository.CourseRepository;
 import ua.com.springschool.repository.GroupRepository;
@@ -17,6 +19,7 @@ import ua.com.springschool.repository.StudentRepository;
 import ua.com.springschool.service.StudentService;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -29,18 +32,21 @@ public class StudentServiceImpl implements StudentService {
     private final GroupRepository groupRepository;
     private final StudentMapper studentMapper;
     private final CourseMapper courseMapper;
+    private final GroupMapper groupMapper;
 
     @Autowired
     public StudentServiceImpl(StudentRepository studentRepository,
                               CourseRepository courseRepository,
                               GroupRepository groupRepository,
                               StudentMapper studentMapper,
-                              CourseMapper courseMapper) {
+                              CourseMapper courseMapper,
+                              GroupMapper groupMapper) {
         this.studentRepository = studentRepository;
         this.courseRepository = courseRepository;
         this.groupRepository = groupRepository;
         this.studentMapper = studentMapper;
         this.courseMapper = courseMapper;
+        this.groupMapper = groupMapper;
     }
 
     @Override
@@ -48,6 +54,14 @@ public class StudentServiceImpl implements StudentService {
         return Optional.of(studentRepository.findAll()
             .stream()
             .map(studentMapper::studentToStudentDto)
+            .collect(Collectors.toList()));
+    }
+
+    @Override
+    public Optional<Iterable<GroupDTO>> listGroups() {
+        return Optional.of(groupRepository.findAll()
+            .stream()
+            .map(groupMapper::groupToGroupDto)
             .collect(Collectors.toList()));
     }
 
@@ -62,9 +76,12 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public StudentDTO saveNewStudent(StudentDTO studentDTO) {
         Student student = studentMapper.studentDtoToStudent(studentDTO);
-        Set<Course> courses = new HashSet<>(courseRepository.findAllById(studentDTO.getCourseIds()));
         Group group = groupRepository.findById(studentDTO.getGroupId())
             .orElseThrow(() -> new RuntimeException("Not existing group with ID: " + studentDTO.getGroupId()));
+        Set<Course> courses = new HashSet<>();
+        if(studentDTO.getCourseIds() != null){
+            courses.addAll(courseRepository.findAllById(studentDTO.getCourseIds()));        //todo refactor required
+        }
         student.setGroup(group);
         student.setCourses(courses);
         return studentMapper.studentToStudentDto(studentRepository.save(student));

@@ -2,14 +2,17 @@ package ua.com.springschool.service;
 
 import jakarta.transaction.Transactional;
 import ua.com.springschool.model.CourseDTO;
+import ua.com.springschool.model.GroupDTO;
 import ua.com.springschool.model.StudentDTO;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 public interface StudentService {
 
     Optional<Iterable<StudentDTO>> listStudents();
+
+    Optional<Iterable<GroupDTO>> listGroups();
 
     Optional<StudentDTO> getStudentById(Long id);
 
@@ -21,7 +24,6 @@ public interface StudentService {
     Boolean deleteById(Long studentId);
 
     Optional<Iterable<CourseDTO>> getCoursesByStudentsId(Long id);
-
 
     @Transactional
     void moveStuentToGroup(Long studentId, Long groupId);

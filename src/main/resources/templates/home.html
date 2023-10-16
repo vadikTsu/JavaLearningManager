@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>School</title>
+    <style>
+        body {
+            text-align: center;
+        }
+
+        .center-image {
+            display: block;
+            margin: 0 auto; /* Center horizontally */
+        }
+
+        .btn-continue {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px; /* Adjust the margin to position the button */
+        }
+
+        .btn-continue:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+<h1 class="center-image">Welcome to School</h1>
+<img th:src="@{/images/school.png}" width="400" height="auto" class="center-image" />
+<br>
+<a th:href="@{/admin}">
+    <button class="btn-continue">Continue as Administrator</button>
+</a>
+</body>
+</html>

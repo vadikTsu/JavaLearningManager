@@ -11,8 +11,7 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
-@Table(name = "\"group\"")
+@Table(name = "groups")
 public class Group {
 
     @Id

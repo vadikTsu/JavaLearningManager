@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Admin Pannel</title>
+    <style>
+        body {
+            text-align: center;
+        }
+        .btn-continue {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .btn-continue:hover {
+            background-color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+<a th:href="@{/students}">
+    <button class="btn-continue">Find Student by ID</button>
+</a>
+<br>
+<a th:href="@{/students}"> <!--should be implemented-->
+    <button class="btn-continue">Get all Students</button>
+</a>
+<br>
+<a th:href="@{/students/form}">
+    <button class="btn-continue">Add New Student</button>
+</a>
+<br>
+<a th:href="@{/}">
+    <button class="btn-continue">Exit</button>
+</a>
+</body>
+</html>
