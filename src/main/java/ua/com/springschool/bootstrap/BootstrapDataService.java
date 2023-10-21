@@ -23,33 +23,35 @@ public class BootstrapDataService implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        Group group1 = Group.builder().id(1L).name("Group 1").students(null).build();
-        Group group2 = Group.builder().id(2L).name("Group 2").students(null).build();
-        Group group3 = Group.builder().id(3L).name("Group 3").students(null).build();
-        groupRepository.save(group1);
-        groupRepository.save(group2);
-        groupRepository.save(group3);
+        Group group1 = Group.builder().id(1L).name("Group 1").build();
+        Group group2 = Group.builder().id(2L).name("Group 2").build();
+        Group group3 = Group.builder().id(3L).name("Group 3").build();
+        groupRepository.saveAll(Arrays.asList(group1, group2, group3));
 
         Course course1 = Course.builder().id(1L).name("Mathematics").build();
         Course course2 = Course.builder().id(2L).name("Physics").build();
         Course course3 = Course.builder().id(3L).name("Programming").build();
         Course course4 = Course.builder().id(4L).name("RandomCourse))").build();
-        courseRepository.save(course1);
-        courseRepository.save(course2);
-        courseRepository.save(course3);
-        courseRepository.save(course4);
+        courseRepository.saveAll(Arrays.asList(course1, course2, course3, course4));
 
-        Student student1 = Student.builder().id(1L).name("Student 1").group(group1).courses(Set.of(course1, course2, course3)).build();
-        Student student2 = Student.builder().id(2L).name("Student 2").group(group1).build();
-        Student student3 = Student.builder().id(3L).name("Student 3").group(group1).build();
-        Student student4 = Student.builder().id(4L).name("Student 4").group(group1).build();
-        Student student5 = Student.builder().id(5L).name("Student 5").group(group2).build();
-        Student student6 = Student.builder().id(6L).name("Student 6").group(group2).build();
-        studentRepository.save(student1);
-        studentRepository.save(student2);
-        studentRepository.save(student3);
-        studentRepository.save(student4);
-        studentRepository.save(student5);
-        studentRepository.save(student6);
+        List<Group> groups = Arrays.asList(group1, group2, group3);
+        List<Course> courses = Arrays.asList(course1, course2, course3, course4);
+
+        Random random = new Random();
+
+        for (long i = 1; i <= 6; i++) {
+            Group randomGroup = groups.get(random.nextInt(groups.size()));
+
+            Course randomCourse = courses.get(random.nextInt(courses.size()));
+
+            Student student = Student.builder()
+                .id(i)
+                .name("Student " + i)
+                .group(randomGroup)
+                .courses(Set.of(randomCourse))
+                .build();
+
+            studentRepository.save(student);
+        }
     }
 }

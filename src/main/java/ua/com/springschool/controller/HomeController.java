@@ -10,11 +10,11 @@ public class HomeController {
 
     @GetMapping
     public String home(){
-        return "home.html";
+        return "home";
     }
 
     @GetMapping("admin")
     public String adminPage(){
-        return "admin-page";
+        return "admin/admin-page";
     }
 }

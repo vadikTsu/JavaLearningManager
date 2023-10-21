@@ -87,7 +87,6 @@
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.thymeleaf/thymeleaf -->
     <dependency>
       <groupId>org.thymeleaf</groupId>
       <artifactId>thymeleaf</artifactId>
@@ -104,12 +103,6 @@
       <plugin>
         <groupId>org.flywaydb</groupId>
         <artifactId>flyway-maven-plugin</artifactId>
-        <configuration>
-          <url>jdbc:postgresql://localhost:5432/postgres</url>
-          <user>postgres</user>
-          <password>postgres</password>
-          <cleanDisabled>false</cleanDisabled>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.springframework.boot</groupId>

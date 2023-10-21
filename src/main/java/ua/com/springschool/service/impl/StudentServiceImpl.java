@@ -1,12 +1,14 @@
 package ua.com.springschool.service.impl;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.com.springschool.entity.Course;
 import ua.com.springschool.entity.Group;
 import ua.com.springschool.entity.Student;
+import ua.com.springschool.exceptions.CourseNotFoundException;
+import ua.com.springschool.exceptions.GroupNotFoundException;
+import ua.com.springschool.exceptions.StudentNotFoundException;
 import ua.com.springschool.mapper.CourseMapper;
 import ua.com.springschool.mapper.GroupMapper;
 import ua.com.springschool.mapper.StudentMapper;
@@ -19,7 +21,6 @@ import ua.com.springschool.repository.StudentRepository;
 import ua.com.springschool.service.StudentService;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -73,14 +74,16 @@ public class StudentServiceImpl implements StudentService {
             .orElse(Optional.empty());
     }
 
+    @Transactional
     @Override
     public StudentDTO saveNewStudent(StudentDTO studentDTO) {
         Student student = studentMapper.studentDtoToStudent(studentDTO);
         Group group = groupRepository.findById(studentDTO.getGroupId())
-            .orElseThrow(() -> new RuntimeException("Not existing group with ID: " + studentDTO.getGroupId()));
+            .orElseThrow(() -> new GroupNotFoundException("Not existing group with ID: " + studentDTO.getGroupId()));
+
         Set<Course> courses = new HashSet<>();
-        if(studentDTO.getCourseIds() != null){
-            courses.addAll(courseRepository.findAllById(studentDTO.getCourseIds()));        //todo refactor required
+        if(student.getCourses() != null){
+            courses.addAll(student.getCourses());
         }
         student.setGroup(group);
         student.setCourses(courses);
@@ -91,10 +94,10 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public void assignStudentToCourse(Long studentId, Long courseId) {
         Student student = studentRepository.findById(studentId)
-            .orElseThrow(() -> new EntityNotFoundException("Student not found with ID: " + studentId));
+            .orElseThrow(() -> new StudentNotFoundException("Student not found with ID: " + studentId));
 
         Course course = courseRepository.findById(courseId)
-            .orElseThrow(() -> new EntityNotFoundException("Course not found with ID: " + courseId));
+            .orElseThrow(() -> new CourseNotFoundException("Course not found with ID: " + courseId));
 
         course.getStudents().add(student);
         student.getCourses().add(course);
@@ -113,7 +116,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public Optional<Iterable<CourseDTO>> getCoursesByStudentsId(Long studentId) {
         Student student = studentRepository.findById(studentId)
-            .orElseThrow(() -> new EntityNotFoundException("Student not found with ID: " + studentId));
+            .orElseThrow(() -> new StudentNotFoundException("Student not found with ID: " + studentId));
         return Optional.of(student
             .getCourses()
             .stream()
@@ -125,10 +128,10 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public void moveStuentToGroup(Long studentId, Long newGroupId) {
         Student student = studentRepository.findById(studentId)
-            .orElseThrow(() -> new EntityNotFoundException("Student not found with ID: " + studentId));
+            .orElseThrow(() -> new StudentNotFoundException("Student not found with ID: " + studentId));
 
         Group newGroup = groupRepository.findById(newGroupId)
-            .orElseThrow(() -> new EntityNotFoundException("Group not found with ID: " + newGroupId));
+            .orElseThrow(() -> new GroupNotFoundException("Group not found with ID: " + newGroupId));
 
         Group oldGroup = student.getGroup();
         if (oldGroup != null && !oldGroup.getId().equals(newGroup.getId())) {
@@ -141,10 +144,10 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public void removeStudentFromCourse(Long studentId, Long courseId) {
         Student student = studentRepository.findById(studentId)
-            .orElseThrow(() -> new EntityNotFoundException("Student not found with ID: " + studentId));
+            .orElseThrow(() -> new StudentNotFoundException("Student not found with ID: " + studentId));
 
         Course course = courseRepository.findById(courseId)
-            .orElseThrow(() -> new EntityNotFoundException("Course not found with ID: " + courseId));
+            .orElseThrow(() -> new CourseNotFoundException("Course not found with ID: " + courseId));
 
         if (course.getStudents().contains(student) && student.getCourses().contains(course)) {
             course.getStudents().remove(student);

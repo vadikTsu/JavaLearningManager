@@ -9,6 +9,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.springschool.entity.Course;
 import ua.com.springschool.entity.Group;
 import ua.com.springschool.entity.Student;
+import ua.com.springschool.exceptions.CourseNotFoundException;
+import ua.com.springschool.exceptions.GroupNotFoundException;
+import ua.com.springschool.exceptions.StudentNotFoundException;
 import ua.com.springschool.mapper.CourseMapper;
 import ua.com.springschool.mapper.StudentMapper;
 import ua.com.springschool.model.CourseDTO;
@@ -93,8 +96,9 @@ class StudentServiceImplTest {
         var group = Group.builder().build();
 
         when(studentMapper.studentDtoToStudent(studentDTO)).thenReturn(student);
-        when(courseRepository.findAllById(studentDTO.getCourseIds())).thenReturn(List.of(course1, course2));
+
         when(groupRepository.findById(studentDTO.getGroupId())).thenReturn(Optional.of(group));
+        when(student.getCourses()).thenReturn(Set.of(course1, course2));
         when(studentMapper.studentToStudentDto(student)).thenReturn(StudentDTO.builder().build());
         when(studentRepository.save(student)).thenReturn(student);
         var savedStudentDto = studentServiceImpl.saveNewStudent(studentDTO);
@@ -171,7 +175,7 @@ class StudentServiceImplTest {
     void getCoursesByStudentsId_shouldThrowEntityNotFoundException_whenStudentDoesNotExist() {
         when(studentRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> studentServiceImpl.getCoursesByStudentsId(1L));
+        assertThrows(StudentNotFoundException.class, () -> studentServiceImpl.getCoursesByStudentsId(1L));
     }
 
     @Test
@@ -203,7 +207,7 @@ class StudentServiceImplTest {
 
         when(studentRepository.findById(studentId)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> studentServiceImpl.moveStuentToGroup(studentId, newGroupId));
+        assertThrows(StudentNotFoundException.class, () -> studentServiceImpl.moveStuentToGroup(studentId, newGroupId));
     }
 
     @Test
@@ -217,7 +221,7 @@ class StudentServiceImplTest {
         when(studentRepository.findById(studentId)).thenReturn(Optional.of(student));
         when(groupRepository.findById(newGroupId)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> studentServiceImpl.moveStuentToGroup(studentId, newGroupId));
+        assertThrows(GroupNotFoundException.class, () -> studentServiceImpl.moveStuentToGroup(studentId, newGroupId));
     }
 
     @Test
@@ -227,7 +231,7 @@ class StudentServiceImplTest {
 
         when(studentRepository.findById(studentId)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> studentServiceImpl.removeStudentFromCourse(studentId, courseId));
+        assertThrows(StudentNotFoundException.class, () -> studentServiceImpl.removeStudentFromCourse(studentId, courseId));
     }
 
     @Test
@@ -241,7 +245,7 @@ class StudentServiceImplTest {
         when(studentRepository.findById(studentId)).thenReturn(Optional.of(student));
         when(courseRepository.findById(courseId)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> studentServiceImpl.removeStudentFromCourse(studentId, courseId));
+        assertThrows(CourseNotFoundException.class, () -> studentServiceImpl.removeStudentFromCourse(studentId, courseId));
     }
 
     @Test

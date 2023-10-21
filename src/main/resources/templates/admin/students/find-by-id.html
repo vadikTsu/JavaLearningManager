@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Student ID Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        form {
+            width: 300px;
+            margin: 0 auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+
+        .btn-continue {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .btn-continue:hover {
+            background-color: #45a049;
+        }
+    </style>
+    <script type="text/javascript">
+        function submitForm() {
+            var id = document.getElementById("id").value;
+            var actionUrl = '/students/find/' + id;
+            document.getElementById("studentForm").action = actionUrl;
+            document.getElementById("studentForm").submit();
+        }
+    </script>
+</head>
+<body>
+<h2>Enter Student ID</h2>
+<form id="studentForm" method="post" onsubmit="event.preventDefault(); submitForm();">
+    <label for="id">Student ID:</label>
+    <input type="number" id="id" name="id" required min="1">
+    <button class="btn-continue" type="submit">Submit</button>
+</form>
+</body>
+</html>
+

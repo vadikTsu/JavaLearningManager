@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Admin Pannel</title>
+    <title>Student Not Found</title>
     <style>
         body {
             text-align: center;
@@ -20,23 +20,22 @@
         .btn-continue:hover {
             background-color: #4CAF50;
         }
+
+        .message {
+            font-size: 24px;
+            color: red;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
-<a th:href="@{/students}">
-    <button class="btn-continue">Find Student by ID</button>
+<a th:href="@{/admin}">
+    <button class="btn-continue">Back to Admin Panel</button>
 </a>
-<br>
-<a th:href="@{/students}"> <!--should be implemented-->
-    <button class="btn-continue">Get all Students</button>
-</a>
-<br>
-<a th:href="@{/students/form}">
-    <button class="btn-continue">Add New Student</button>
-</a>
-<br>
-<a th:href="@{/}">
-    <button class="btn-continue">Exit</button>
-</a>
+
+<div class="message">
+    Student not found.
+</div>
+
 </body>
 </html>
