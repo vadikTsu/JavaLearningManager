@@ -5,16 +5,13 @@ import ua.com.springschool.model.CourseDTO;
 import ua.com.springschool.model.GroupDTO;
 import ua.com.springschool.model.StudentDTO;
 
-import java.util.List;
-import java.util.Optional;
-
 public interface StudentService {
 
-    Optional<Iterable<StudentDTO>> listStudents();
+    Iterable<StudentDTO> listStudents();
 
-    Optional<Iterable<GroupDTO>> listGroups();
+    Iterable<GroupDTO> listGroups();
 
-    Optional<StudentDTO> getStudentById(Long id);
+    StudentDTO getStudentById(Long id);
 
     StudentDTO saveNewStudent(StudentDTO studentDTO);
 
@@ -23,7 +20,7 @@ public interface StudentService {
 
     Boolean deleteById(Long studentId);
 
-    Optional<Iterable<CourseDTO>> getCoursesByStudentsId(Long id);
+    Iterable<CourseDTO> getCoursesByStudentsId(Long id);
 
     @Transactional
     void moveStuentToGroup(Long studentId, Long groupId);

@@ -1,6 +1,7 @@
 package ua.com.springschool.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import net.bytebuddy.dynamic.DynamicType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -52,36 +53,34 @@ class StudentServiceImplTest {
     private StudentMapper studentMapper;
 
     @Test
-    void listStudents_shouldReturnOptionalIterableOfStudentsDto_whenNotEmpltyRepository() {
+    void listStudents_shouldReturnIterableOfStudentsDto_whenNotEmptyRepository() {
         Student s = Student.builder().group(null).id(1L).name("alex").build();
         StudentDTO dto1 = StudentDTO.builder().groupId(null).id(1L).name("alex").build();
 
         when(studentRepository.findAll()).thenReturn(List.of(s));
         when(studentMapper.studentToStudentDto(s)).thenReturn(dto1);
 
-        assertTrue(studentServiceImpl.listStudents() instanceof Optional<Iterable<StudentDTO>>);
-        assertEquals(studentServiceImpl.listStudents().get(), List.of(dto1));
+        assertTrue(studentServiceImpl.listStudents() instanceof Iterable<StudentDTO>);
+        assertEquals(studentServiceImpl.listStudents(), List.of(dto1));
     }
 
     @Test
-    void getStudentById_shouldReturnOptioanlOfStuudentDTO_whenExistingStusdentId() {
+    void getStudentById_shouldReturnStudentDTO_whenExistingStudentId() {
         Student s = Student.builder().group(null).id(1L).name("alex").build();
         StudentDTO dto = StudentDTO.builder().groupId(null).id(1L).name("alex").build();
 
         when(studentRepository.findById(1L)).thenReturn(Optional.ofNullable(s));
         when(studentMapper.studentToStudentDto(s)).thenReturn(dto);
 
-        assertTrue(studentServiceImpl.getStudentById(1L) instanceof Optional<StudentDTO>);
-        assertEquals(studentServiceImpl.getStudentById(1L).get(), dto);
+        assertTrue(studentServiceImpl.getStudentById(1L) instanceof StudentDTO);
+        assertEquals(studentServiceImpl.getStudentById(1L), dto);
     }
 
     @Test
-    void getStudentById_shouldReturnEmptyOptioanl_whenNonExistingStudentId() {
+    void getStudentById_shouldThrowStudentNotFoundException_whenNonExistingStudentId() {
         when(studentRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        Optional<StudentDTO> result = studentServiceImpl.getStudentById(2L);
-
-        assertEquals(Optional.empty(), result);
+        assertThrows(StudentNotFoundException.class,()-> studentServiceImpl.getStudentById(2L));
     }
 
     @Test
@@ -161,14 +160,12 @@ class StudentServiceImplTest {
         when(courseMapper.courseToCourseDto(course1)).thenReturn(courseDto1);
         when(courseMapper.courseToCourseDto(course2)).thenReturn(courseDto2);
 
-        Optional<Iterable<CourseDTO>> result = studentServiceImpl.getCoursesByStudentsId(1L);
+        Iterable<CourseDTO> result = studentServiceImpl.getCoursesByStudentsId(1L);
 
-        assertTrue(result.isPresent());
-        Iterable<CourseDTO> resultCourses = result.get();
-        assertNotNull(resultCourses);
-        assertEquals(2, ((List<CourseDTO>) resultCourses).size());
-        assertTrue(((List<CourseDTO>) resultCourses).contains(courseDto1));
-        assertTrue(((List<CourseDTO>) resultCourses).contains(courseDto2));
+        assertNotNull(result);
+        assertEquals(2, ((List<CourseDTO>) result).size());
+        assertTrue(((List<CourseDTO>) result).contains(courseDto1));
+        assertTrue(((List<CourseDTO>) result).contains(courseDto2));
     }
 
     @Test

@@ -37,7 +37,7 @@ class AdminControllerTest {
 
     @Test
     public void testStudentById() throws Exception {
-        when(studentService.getStudentById(1L)).thenReturn(Optional.of(StudentDTO.builder().build()));
+        when(studentService.getStudentById(1L)).thenReturn(StudentDTO.builder().build());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/students/find/1"))
             .andExpect(status().isOk())

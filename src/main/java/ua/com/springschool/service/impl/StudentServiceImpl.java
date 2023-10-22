@@ -51,27 +51,26 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Optional<Iterable<StudentDTO>> listStudents() {
-        return Optional.of(studentRepository.findAll()
+    public Iterable<StudentDTO> listStudents() {
+        return studentRepository.findAll()
             .stream()
             .map(studentMapper::studentToStudentDto)
-            .collect(Collectors.toList()));
+            .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<Iterable<GroupDTO>> listGroups() {
-        return Optional.of(groupRepository.findAll()
+    public Iterable<GroupDTO> listGroups() {
+        return groupRepository.findAll()
             .stream()
             .map(groupMapper::groupToGroupDto)
-            .collect(Collectors.toList()));
+            .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<StudentDTO> getStudentById(Long id) {
-        return studentRepository.findById(id)
-            .map(studentMapper::studentToStudentDto)
-            .map(Optional::of)
-            .orElse(Optional.empty());
+    public StudentDTO getStudentById(Long id) {
+        return studentMapper.studentToStudentDto(
+            studentRepository.findById(id)
+            .orElseThrow(()-> new StudentNotFoundException("Not existing student with ID: " + id)));
     }
 
     @Transactional
@@ -114,14 +113,14 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Optional<Iterable<CourseDTO>> getCoursesByStudentsId(Long studentId) {
+    public Iterable<CourseDTO> getCoursesByStudentsId(Long studentId) {
         Student student = studentRepository.findById(studentId)
             .orElseThrow(() -> new StudentNotFoundException("Student not found with ID: " + studentId));
-        return Optional.of(student
+        return student
             .getCourses()
             .stream()
             .map(courseMapper::courseToCourseDto)
-            .collect(Collectors.toList()));
+            .collect(Collectors.toList());
     }
 
     @Transactional

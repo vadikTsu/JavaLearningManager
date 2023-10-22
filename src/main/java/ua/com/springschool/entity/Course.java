@@ -19,6 +19,6 @@ public class Course {
     private Long id;
     private String name;
 
-    @ManyToMany(mappedBy = "courses", targetEntity = Student.class)
+    @ManyToMany(mappedBy = "courses", cascade = CascadeType.REMOVE, targetEntity = Student.class)
     private Set<Student> students;
 }

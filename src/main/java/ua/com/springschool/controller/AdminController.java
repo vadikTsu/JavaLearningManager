@@ -2,7 +2,10 @@ package ua.com.springschool.controller;
 
 import com.fasterxml.jackson.databind.introspect.TypeResolutionContext;
 import jakarta.websocket.server.PathParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.reactive.ClientHttpResponseDecorator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -16,6 +19,7 @@ import ua.com.springschool.service.StudentService;
 
 import java.util.List;
 
+@Slf4j
 @Controller
 @RequestMapping("/students")
 public class AdminController {
@@ -29,8 +33,7 @@ public class AdminController {
 
     @ModelAttribute("groups")
     public List<GroupDTO> groups(){
-        Iterable<GroupDTO> gruops =  studentService.listGroups().orElse(null);
-        return (List<GroupDTO>) gruops;
+        return (List<GroupDTO>) studentService.listGroups();
     }
 
     @GetMapping("/find")
@@ -40,11 +43,13 @@ public class AdminController {
 
     @PostMapping("/find/{id}")
     public String studentById(@PathVariable(value = "id") Long id, Model model){
-        StudentDTO student = studentService.getStudentById(id).orElse(null);
-        if (student != null) {
+        try{
+            StudentDTO student = studentService.getStudentById(id);
+            log.info("/find/{id} -- fetched student from DB");
             model.addAttribute("student", student);
             return "admin/students/information";
-        } else {
+        } catch(RuntimeException exception){
+            log.warn(exception.getMessage());
             return "admin/students/not-found";
         }
     }
@@ -57,8 +62,8 @@ public class AdminController {
 
     @PostMapping("/save")
     public String saveStudent(@ModelAttribute("student") StudentDTO student, Model model) {
-        StudentDTO persistedStuednt = studentService.saveNewStudent(student);
-        model.addAttribute("student", persistedStuednt);
+        StudentDTO persistedStudent = studentService.saveNewStudent(student);
+        model.addAttribute("student", persistedStudent);
         return "admin/students/information";
     }
 
@@ -66,9 +71,12 @@ public class AdminController {
     public String deleteStudentById(@PathVariable(value = "id") Long id) {
         boolean isDeleted = studentService.deleteById(id);
         if (isDeleted) {
+            log.info("Deleted student with ID: " + id);
             return "redirect:/admin";
         } else {
+            log.warn("Failed to delete student with ID: " + id);
             return "admin/students/not-found";
         }
     }
+
 }
