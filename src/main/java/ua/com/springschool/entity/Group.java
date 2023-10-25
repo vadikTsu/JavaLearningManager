@@ -1,8 +1,8 @@
 package ua.com.springschool.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
 
+import jakarta.persistence.*;
 import java.util.Set;
 
 @Entity

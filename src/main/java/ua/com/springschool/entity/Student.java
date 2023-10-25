@@ -2,6 +2,8 @@ package ua.com.springschool.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ua.com.springschool.entity.Course;
+import ua.com.springschool.entity.Group;
 
 import java.util.Set;
 

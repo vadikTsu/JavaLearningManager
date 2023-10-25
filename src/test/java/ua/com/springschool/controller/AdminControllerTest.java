@@ -66,7 +66,7 @@ class AdminControllerTest {
 
     @Test
     public void testDeleteStudentById() throws Exception {
-        when(studentService.deleteById(1L)).thenReturn(true);
+        when(studentService.deleteStudentById(1L)).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/students/delete/1"))
             .andExpect(status().is3xxRedirection())

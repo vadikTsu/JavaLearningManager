@@ -1,18 +1,10 @@
 package ua.com.springschool.controller;
 
-import com.fasterxml.jackson.databind.introspect.TypeResolutionContext;
-import jakarta.websocket.server.PathParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.reactive.ClientHttpResponseDecorator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import ua.com.springschool.exceptions.StudentNotFoundException;
 import ua.com.springschool.model.GroupDTO;
 import ua.com.springschool.model.StudentDTO;
 import ua.com.springschool.service.StudentService;
@@ -69,7 +61,7 @@ public class AdminController {
 
     @PostMapping("/delete/{id}")
     public String deleteStudentById(@PathVariable(value = "id") Long id) {
-        boolean isDeleted = studentService.deleteById(id);
+        boolean isDeleted = studentService.deleteStudentById(id);
         if (isDeleted) {
             log.info("Deleted student with ID: " + id);
             return "redirect:/admin";

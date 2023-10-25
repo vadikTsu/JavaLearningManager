@@ -21,7 +21,6 @@ import ua.com.springschool.repository.StudentRepository;
 import ua.com.springschool.service.StudentService;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -103,7 +102,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Boolean deleteById(Long studentId) {
+    public Boolean deleteStudentById(Long studentId) {
         if (studentRepository.existsById(studentId)) {
             studentRepository.deleteById(studentId);
             return true;
@@ -111,6 +110,7 @@ public class StudentServiceImpl implements StudentService {
             return false;
         }
     }
+
 
     @Override
     public Iterable<CourseDTO> getCoursesByStudentsId(Long studentId) {
@@ -125,7 +125,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Transactional
     @Override
-    public void moveStuentToGroup(Long studentId, Long newGroupId) {
+    public void moveStudentToGroup(Long studentId, Long newGroupId) {
         Student student = studentRepository.findById(studentId)
             .orElseThrow(() -> new StudentNotFoundException("Student not found with ID: " + studentId));
 
