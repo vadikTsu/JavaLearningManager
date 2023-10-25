@@ -8,7 +8,6 @@ import ua.com.springschool.mapper.StudentMapper;
 import ua.com.springschool.model.StudentDTO;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
