@@ -111,7 +111,6 @@ public class StudentServiceImpl implements StudentService {
         }
     }
 
-
     @Override
     public Iterable<CourseDTO> getCoursesByStudentsId(Long studentId) {
         Student student = studentRepository.findById(studentId)

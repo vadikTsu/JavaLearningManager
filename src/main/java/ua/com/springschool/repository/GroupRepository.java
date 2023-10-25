@@ -5,20 +5,23 @@ import org.springframework.stereotype.Repository;
 import ua.com.springschool.entity.Group;
 
 import java.util.Collection;
+import java.util.List;
 
 @Repository
 public class GroupRepository  extends  AbstractJpaRepository<Group> {
 
     public GroupRepository() {
         super();
-
         setEntity(Group.class);
     }
 
-//    @Query("SELECT g FROM Group g " +
-//        "LEFT JOIN g.students s " +
-//        "GROUP BY g.id, g.name " +
-//        "HAVING COUNT(s.id) <= :lessThanStudents")
-//    Collection<Group> findAllGroupsWithLessStudents(int lessThanStudents);
+public Collection<Group> findAllGroupsWithLessStudents(int number) {
+    return entityManager.createQuery("SELECT g FROM Group g " +
+            "LEFT JOIN g.students s " +
+            "GROUP BY g.id, g.name " +
+            "HAVING COUNT(s.id) <= :number")
+        .setParameter("number", number)
+        .getResultList();
+    }
 }
 

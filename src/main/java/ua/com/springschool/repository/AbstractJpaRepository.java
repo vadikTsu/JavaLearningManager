@@ -1,18 +1,21 @@
 package ua.com.springschool.repository;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
+@Transactional
 public class AbstractJpaRepository<T> {
 
     private Class<T> entity;
 
     @PersistenceContext
-    private EntityManager entityManager;
+    protected EntityManager entityManager;
 
     public final void setEntity(final Class<T> entity) {
         this.entity = entity;
@@ -28,14 +31,9 @@ public class AbstractJpaRepository<T> {
     }
 
     public boolean existsById(final long id) {
-        if (entityManager.contains(findById(id))) {
-            return true;
-        } else {
-            return false;
-        }
+        return entityManager.contains(entityManager.find(entity, id));
     }
 
-    @Transactional
     public T save(T entity) {
         if (entityManager.contains(entity)) {
             entityManager.persist(entity);
@@ -45,13 +43,19 @@ public class AbstractJpaRepository<T> {
         return entity;
     }
 
+    public List<T> findAllById(Set<Long> ids) {
+        String jpql = "SELECT e FROM " + entity.getSimpleName() + " e WHERE e.id IN :ids";
+        return entityManager.createQuery(jpql, entity)
+            .setParameter("ids", ids)
+            .getResultList();
+    }
 
     public void delete(final T entity) {
         entityManager.remove(entity);
     }
 
     public void deleteById(final long id) {
-        final T entity = (T) findById(id);
+        final T entity = findById(id).orElseThrow(EntityNotFoundException::new);
         delete(entity);
     }
 
